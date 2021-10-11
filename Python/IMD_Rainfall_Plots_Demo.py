@@ -3,7 +3,7 @@
 
 # ## Import all the required packages
 
-# In[1]:
+# In[30]:
 
 
 import rioxarray as rio
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 # ## Customize the Proplot package (optional)
 
-# In[3]:
+# In[31]:
 
 
 plot.rc.reset()
@@ -37,7 +37,7 @@ plot.rc['xtick.major.size']=3
 plot.rc['ytick.major.size']=3
 
 # Grid properties (self-explanatory)
-plot.rc['grid']=True
+plot.rc['grid']=False
 plot.rc['grid.linewidth']=0.25
 plot.rc['grid.linestyle']=(0, (5, 10))
 
@@ -54,7 +54,7 @@ plot.rc['colorbar.insetpad']='0.5em' # Insert whitespace around the colorbar
 # + **After you've downloaded the multiple .nc files, put them all in a folder of your choice.**
 # + **We will use xarray to read all the multiple files at once.**
 
-# In[4]:
+# In[32]:
 
 
 #Opening multiple datasets using xarray's open_mfdataset command. 
@@ -66,7 +66,7 @@ ds = xr.open_mfdataset('/media/sarat/Study/IMD_data/rain1by1/*.nc')
 
 # ## Check the properties of the loaded dataset
 
-# In[5]:
+# In[33]:
 
 
 ds
@@ -80,7 +80,7 @@ ds
 # 
 # **The picture below provides a useful visualization of how the gridded data is arranged**. For more info on how xarray works, click [here.](https://xarray.pydata.org/en/stable/)
 
-# In[19]:
+# In[34]:
 
 
 ds.rf
@@ -88,20 +88,20 @@ ds.rf
 
 # **Checking the longitude, latitude and time dimensions in the loaded xarray dataset**
 
-# In[18]:
+# In[35]:
 
 
 
 ds.lon
 
 
-# In[17]:
+# In[36]:
 
 
 ds.lat
 
 
-# In[16]:
+# In[37]:
 
 
 ds.time
@@ -119,20 +119,20 @@ ds.time
 # + In our case, since we have only one variable, we can also directly operate on **ds** without specifying the variable.
 # + However, to be as general as possible, we will explicitly pass the **rainfall (ds.rf)** variable before performing any operatiom.
 
-# In[32]:
+# In[38]:
 
 
 ds_sel_time = ds.rf.sel(time='1995-05-17T00:00:00.000000000') 
 ds_sel_loc = ds.rf.sel(lat=18.5,lon=82.5) 
 
 
-# In[33]:
+# In[39]:
 
 
 ds_sel_time # This is a 2-D array of rainfall values on that particular time value.
 
 
-# In[22]:
+# In[40]:
 
 
 ds_sel_loc # This is 1-D time-series of rainfall values for that particular location.
@@ -141,26 +141,49 @@ ds_sel_loc # This is 1-D time-series of rainfall values for that particular loca
 # ## **Now, we will perform operations on the time axis of the rainfall dataset.**
 # + Mean over time
 # + Variance over time
+# + Grouping over time
+# + Resampling over time
 # 
 # These operations can be perorfmed along any dimension other than time.
 
-# In[27]:
+# In[41]:
 
 
+# Mean and Variance of the data along the time axis.
 ds_mean = ds.rf.mean('time')
 ds_var = ds.rf.var('time')
 
 
-# In[29]:
+# In[42]:
 
 
 ds_mean
 
 
-# In[30]:
+# In[43]:
 
 
 ds_var
+
+
+# **We can also group the data along the time axis into either hours, days, months and years. The, we can apply methods such as mean and variance to the grouped dataset.**
+
+# In[44]:
+
+
+ds_year=ds.groupby('time.year') # Also, we can use 'time.month' and 'time.day' for grouping.
+ds_year_mean = ds_year.mean('time') 
+ds_year_mean # Annual mean rainfall
+
+
+# **We can use the resample function to sample our data at a different resolution.**
+
+# In[45]:
+
+
+ds_res_month = ds.resample(time='1M') # Valid arguments are '1M'.'1D' and '1Y'.
+# Then, we can apply mean, sum,variance etc.
+ds_res_month.sum('time') # Monthly Rainfall Accumulation
 
 
 #  # Plotting the rainfall data
@@ -170,19 +193,19 @@ ds_var
 # 
 # **So, we can either select a slice of the original dataset or plot the 2-D arrays and 1-D time series that we generated earlier.**
 
-# In[38]:
+# In[46]:
 
 
 ds.rf.sel(time='1995-08-31T00:00:00.000000000').plot() # extracting a specific time slice and plotting it.
 
 
-# In[35]:
+# In[47]:
 
 
 ds_sel_time.plot() # Same as above but here we directly load the variable that we extracted earlier.
 
 
-# In[39]:
+# In[48]:
 
 
 ds_sel_loc.plot()
@@ -200,7 +223,7 @@ ds_sel_loc.plot()
 # 
 # **More info on proplot can be found [here.](https://proplot.readthedocs.io/en/latest/index.html)**
 
-# In[61]:
+# In[49]:
 
 
 # Generate the figure and axis with nrows and ncols for subplots ###
@@ -224,7 +247,7 @@ axs.format(lonlim=(lon_min, lon_max),
            latlim=(lat_min, lat_max), 
            labels=True,
            innerborders=False, 
-           latlines=4, lonlines=2,
+           latlines=4, lonlines=4,
            abc='(a)', abcloc='ll', 
            gridminor=False,
            suptitle='IMD Rainfall' )
