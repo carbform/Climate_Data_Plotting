@@ -285,4 +285,9 @@ for i in range(0,2):
 # axs[1].colorbar(n,loc='b',drawedges=True, width = 0.10 , length=0.65, label= 'Rainfall')
 
 
+# %%
+# Saving the figures
+# Use the desired file extesnsion (jpg, eps, png, svg etc.)
+fig.savefig('/home/carbform/Climate_Data_Plotting/plots/1.svg')
+
 
