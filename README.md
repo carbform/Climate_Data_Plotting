@@ -15,7 +15,7 @@ These are the python and MATLAB scripts I use to custom plot climate data for my
 
 - **Jupyter_Notebook_python/IMD_Rainfall_Plots.ipynb**  Rainfall data plotting using xarray and proplot.
 - **Jupyter_Notebook_python/Andhra_rainfall_plots.ipynb** Subset a region and mask a NetCDF file with a shapefile and plot with shapefile overlaid.
-- **point_map_cartopy.ipynb, point_map.ipynb** WIP! Need to open in Google Colab for now.
+- **point_map_cartopy.ipynb, point_map.ipynb, jjas_composites_temperature.ipynb** WIP! Need to open in Google Colab for now.
    
 
 **Dependencies:**
